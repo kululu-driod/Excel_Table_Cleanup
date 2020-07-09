@@ -6,8 +6,8 @@ header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT",
 # ---Specify here header/footer keyword where rows that contains them will be removed, using the the --keep_header flag ignores header removoal
 header_contain=["HKSAPID_SOW", "HKSAPIDSOW", "SCHEDULE NO."]
 
-#----REMOVE the following words
-#remove
+#----REMOVE words that are exact match as the following words
+remove_items=["item"]
 
 # ---Under Construction
 # ---spliting lines by capitalizaition

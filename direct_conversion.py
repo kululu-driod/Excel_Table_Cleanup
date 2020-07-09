@@ -7,16 +7,17 @@ from config import *
 """ This code splits the lines from an csv input file"""
 """ Remove designated header/footers """
 """ Dropp certain words from the file"""
+""" Author: Y,  2020"""
 
-# TODO remove header/footer
-# TODO figure out table head
-# TODO ignore words (item etc )
-# TODO argparse
 # TODO table head rip
 # TODO splitting table
+# TODO if something is in column 1, and they are all just alphabets of more than 3 words, move them up 1 row to the last non-empty cell
 
 
 parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
+
+parser.add_argument('input_file', nargs='?',
+                    help='input csv file, follows right after program name, default to test.csv if not specfied', default="test.csv")
 parser.add_argument('--keep_header', dest='keep_header',default=False,
                     help='Remove lines containing headers/footers as is specified in the script')
 parser.add_argument('--ignore_keywords', dest='ignore_keywords',default=False,
@@ -88,13 +89,16 @@ def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_con
     return output
 
 
-with open("test.csv", newline='') as csvfile:
+print("input_file:", args.input_file)
+# TODO use | instead of ,
+with open(args.input_file, newline='') as csvfile:
     # ---Reading the csv
     spamreader = csv.reader(csvfile)
 
     # ---Reading the rows
 
     output_csv=open('output.csv', 'w', newline='')
+
 
     spamwriter = csv.writer(output_csv,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
@@ -131,17 +135,11 @@ with open("test.csv", newline='') as csvfile:
         else:
             l_2d_trans=transpose_2d_list_string(l_2d_cleaned)
 
-        #print("l_2d_trans:", l_2d_trans)
-        # remove header
-        #if not args.keep_header:
-        l_2d_trans=remove_header(l_2d_trans)
-
-        #print("l_2d_trans after:", l_2d_trans)
-
-
-
-        # todo, end of smart split line
-
+        #--- remove header
+        if not args.keep_header:
+            l_2d_trans=remove_header(l_2d_trans)
 
         for output_row in l_2d_trans:
+
+            print("output_row: ", output_row)
             spamwriter.writerow(output_row)
