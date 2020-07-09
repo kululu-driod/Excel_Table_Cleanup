@@ -28,10 +28,10 @@ parser.add_argument('--table_split', dest='table_split',default=False,
 args = parser.parse_args()
 
 # specify here header/footer keyword
-header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT", "OFFICE RENOVATION FOR HKSAPID AT", "SCHEDULE OF WORKS", "SCHEDULE NO. 1 - PRELIMINARIES", "LEK YUEN COMMUNITY HALL, SHATIN, NT", "UNIT NO. 2+7, G/F"]
+header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT", "OFFICE RENOVATION FOR HKSAPID AT", "SCHEDULE OF WORKS", "SCHEDULE NO. 1 - PRELIMINARIES", "LEK YUEN COMMUNITY HALL, SHATIN, NT", "UNIT NO. 2+7, G/F", "SCHEDULE NO.", "LEK YUEN COMMUNITY HALL,SHAUN, NT"]
 
 
-header_contain=["HKSAPID_SOW"]
+header_contain=["HKSAPID_SOW", "HKSAPIDSOW"]
 
 
 # ---Under Construction
@@ -82,6 +82,29 @@ def clean_2dlist(l_2d, ugly_chars=["  "]):
 
     return output
 
+def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_contain):
+    output=[]
+    print("input_l_2d", l_2d)
+    for i_row, row in enumerate(l_2d):
+        skip_row=False
+        for item in row:
+
+            print("item: ", item)
+            for keyword in header_keyword:
+                print("keyword", keyword)
+                if keyword==item:
+                    print("keyword matched: ", keyword)
+                    skip_row=True
+            for contain_keyword in header_contain:
+                print(contain_keyword)
+                if contain_keyword in item:
+                    print("keyword contained: ", contain_keyword)
+                    skip_row=True
+        if skip_row==False:
+            print("row appending :", row)
+            output.append(row)
+        print("output", output)
+    return output
 
 
 with open("test.csv", newline='') as csvfile:
@@ -93,11 +116,13 @@ with open("test.csv", newline='') as csvfile:
     output_csv=open('output.csv', 'w', newline='')
 
     spamwriter = csv.writer(output_csv,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+    #TODO call the following smart split line
     for i_row, row in enumerate(spamreader):
         # ---Getting the items in the rows
 
+
         l_2d=[]
-        previous_pos=0
         # --- For items
         for i_item, item in enumerate(row):
             list_item=item.split("\n")
@@ -114,13 +139,23 @@ with open("test.csv", newline='') as csvfile:
             if not list_item==[""] and not list_item==[]:
                 l_2d.append(list_item)
 
-            #print("list_item:", list_item)
         l_2d_cleaned=clean_2dlist(l_2d)
 
         if l_2d_cleaned==[]:
             continue
         else:
             l_2d_trans=transpose_2d_list_string(l_2d_cleaned)
+
+        print("l_2d_trans:", l_2d_trans)
+        # remove header
+        #if not args.keep_header:
+        l_2d_trans=remove_header(l_2d_trans)
+
+        print("l_2d_trans after:", l_2d_trans)
+
+
+
+        # todo, end of smart split line
 
 
         for output_row in l_2d_trans:
