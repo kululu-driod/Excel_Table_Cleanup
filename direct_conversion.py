@@ -2,10 +2,41 @@ import csv
 import numpy as np
 import re
 
+import argparse
+
+""" This code splits the lines from an csv input file"""
+""" Remove designated header/footers """
+""" Dropp certain words from the file"""
+
 # TODO remove header/footer
 # TODO figure out table head
 # TODO ignore words (item etc )
-# TODO
+# TODO argparse
+# TODO table head rip
+# TODO splitting table
+
+
+parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
+parser.add_argument('--keep_header', dest='keep_header',default=False,
+                    help='Remove lines containing headers/footers as is specified in the script')
+parser.add_argument('--ignore_keywords', dest='ignore_keywords',default=False,
+                    help="ignore and drop certain keywords as is specified in the script")
+parser.add_argument('--remove_table_head', dest='remove_table_head',default=False,
+                    help="Remove recurring table head as is specified in the script")
+parser.add_argument('--table_split', dest='table_split',default=False,
+                    help="Auto figure out and splitting tables")
+args = parser.parse_args()
+
+# specify here header/footer keyword
+header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT", "OFFICE RENOVATION FOR HKSAPID AT", "SCHEDULE OF WORKS", "SCHEDULE NO. 1 - PRELIMINARIES", "LEK YUEN COMMUNITY HALL, SHATIN, NT", "UNIT NO. 2+7, G/F"]
+
+
+header_contain=["HKSAPID_SOW"]
+
+
+# ---Under Construction
+# ---spliting lines by capitalizaition
+cap_is_newline=False
 
 
 def transpose_2d_list(l_2d):
@@ -52,7 +83,6 @@ def clean_2dlist(l_2d, ugly_chars=["  "]):
     return output
 
 
-cap_is_newline=False
 
 with open("test.csv", newline='') as csvfile:
     # ---Reading the csv
@@ -75,11 +105,16 @@ with open("test.csv", newline='') as csvfile:
             if not i_item==0 and cap_is_newline:
                 list_item=further_split_at_cap(list_item)
 
-            # TODO identify a header
-            header=False
+            # If line contain header keyword, remove it
+            if not args.keep_header:
+                for keyword in header_keyword:
+                    if keyword in list_item:
+                        continue
 
-            if not header and not list_item==[""] and not list_item==[]:
+            if not list_item==[""] and not list_item==[]:
                 l_2d.append(list_item)
+
+            #print("list_item:", list_item)
         l_2d_cleaned=clean_2dlist(l_2d)
 
         if l_2d_cleaned==[]:
