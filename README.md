@@ -1,4 +1,4 @@
-# Excel_Table_Cleanup
+# Tendering Excel Table Cleanup
 The following program cleans up excel tables in csv format for tendering use.
 
 Author: Y , 2020. All rights reserved
