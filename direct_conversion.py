@@ -4,18 +4,14 @@ import re
 import argparse
 from config import *
 
-""" This code splits the lines from an csv input file"""
-""" Remove designated header/footers """
-""" Dropp certain words from the file"""
+""" The following code splits the lines, clean up headers/footers and remove keywords from an csv input file"""
 """ Author: Y,  2020"""
 
 # TODO table head rip
 # TODO splitting table
 # TODO if something is in column 1, and they are all just alphabets of more than 3 words, move them up 1 row to the last non-empty cell
 
-
 parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
-
 parser.add_argument('input_file', nargs='?',
                     help='input csv file, follows right after program name, default to test.csv if not specfied', default="test.csv")
 parser.add_argument('--keep_header', dest='keep_header',default=False,
@@ -26,19 +22,42 @@ parser.add_argument('--remove_table_head', dest='remove_table_head',default=Fals
                     help="Remove recurring table head as is specified in the script")
 parser.add_argument('--table_split', dest='table_split',default=False,
                     help="Auto figure out and splitting tables")
+#parser.add_argument('--unmerge_cells', dest='unmerge_cells',default=False,
+#                    help="Auto figure out and splitting tables")
 args = parser.parse_args()
 
 
 def transpose_2d_list_string(l_2d):
-    max_length=max([len(item ) for item in l_2d])
+    max_length=max([len(item) for item in l_2d])
     l_2d_T=[ [] for i in range(max_length)]
     for i_row, row in enumerate(l_2d):
         for i_column in range(max_length):
             try:
                 l_2d_T[i_column].append(l_2d[i_row][i_column])
             except:
-                pass
+                l_2d_T[i_column].append('')
+
+    #if (not args.unmerge_cells):
+    #    l_2d_T=merge_cells(l_2d_T)
+
     return l_2d_T
+
+#def merge_cells(l_2d):
+#    # If there is nothing else in the first transposed column, merge the cells in same row the following columns
+#    output_l_2d=l_2d
+#    line_merged=1
+#    for i_row, row in enumerate(l_2d):
+#        # if first item ==""
+#        if row[0] == "" and (not i_row ==0):
+#            for i_item, item in enumerate(l_2d[i_row-1][1:]):
+#                # if
+#                if not item=="":
+#                    output_l_2d[i_row-line_merged][i_item]=item+"\n"+l_2d[i_row][i_item]
+#
+#                print("row:")
+#                print(output_l_2d[i_row-line_merged][i_item])
+#                output_l_2d[i_row][i_item]=""
+#    return output_l_2d
 
 
 def further_split_at_cap(input_list, cap=True):
@@ -62,6 +81,14 @@ def clean_2dlist(l_2d, ugly_chars=["  "]):
                 item=item.replace(ugly_char, "")
                 item=item.replace(ugly_char, "")
             output[i_row].append(item)
+    # if the item in the ignore list, ignore them
+    #if args.ignore_keywords:
+    #    for i_row, row in enumerate(l_2d):
+    #        for i_item, item in enumerate(row):
+    #            if item==
+
+
+
 
     return output
 
@@ -90,7 +117,6 @@ def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_con
 
 
 print("input_file:", args.input_file)
-# TODO use | instead of ,
 with open(args.input_file, newline='') as csvfile:
     # ---Reading the csv
     spamreader = csv.reader(csvfile)
@@ -102,10 +128,6 @@ with open(args.input_file, newline='') as csvfile:
 
     spamwriter = csv.writer(output_csv,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-    # --smart transpose
-    # --clean
-    # --remove header
-    # --split table
 
     #TODO call the following smart split line
     for i_row, row in enumerate(spamreader):
@@ -124,16 +146,18 @@ with open(args.input_file, newline='') as csvfile:
                 for keyword in header_keyword:
                     if keyword in list_item:
                         continue
-
             if not list_item==[""] and not list_item==[]:
                 l_2d.append(list_item)
 
+
         l_2d_cleaned=clean_2dlist(l_2d)
+
 
         if l_2d_cleaned==[]:
             continue
         else:
             l_2d_trans=transpose_2d_list_string(l_2d_cleaned)
+
 
         #--- remove header
         if not args.keep_header:
@@ -141,5 +165,4 @@ with open(args.input_file, newline='') as csvfile:
 
         for output_row in l_2d_trans:
 
-            print("output_row: ", output_row)
             spamwriter.writerow(output_row)
