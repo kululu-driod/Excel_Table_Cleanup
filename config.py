@@ -7,7 +7,8 @@ header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT",
 header_contain=["HKSAPID_SOW", "HKSAPIDSOW", "SCHEDULE NO."]
 
 #----REMOVE words that are exact match as the following words
-remove_items=["item"]
+# Capitalization matters
+remove_items=["item", "Item"]
 
 # ---Under Construction
 # ---spliting lines by capitalizaition

@@ -14,16 +14,15 @@ from config import *
 parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
 parser.add_argument('input_file', nargs='?',
                     help='input csv file, follows right after program name, default to test.csv if not specfied', default="test.csv")
-parser.add_argument('--keep_header', dest='keep_header',default=False,
+parser.add_argument('--keep_header', dest='keep_header',default=False, action="store_true",
                     help='Remove lines containing headers/footers as is specified in the script')
 parser.add_argument('--ignore_keywords', dest='ignore_keywords',default=False,
-                    help="ignore and drop certain keywords as is specified in the script")
-parser.add_argument('--remove_table_head', dest='remove_table_head',default=False,
-                    help="Remove recurring table head as is specified in the script")
-parser.add_argument('--table_split', dest='table_split',default=False,
-                    help="Auto figure out and splitting tables")
-#parser.add_argument('--unmerge_cells', dest='unmerge_cells',default=False,
+action="store_true", help="ignore and drop certain keywords as is specified in the script")
+parser.add_argument('--remove_table_head', dest='remove_table_head',default=False,action="store_true", help="Remove recurring table head as is specified in the script")
+#parser.add_argument('--table_split', dest='table_split',default=False,
 #                    help="Auto figure out and splitting tables")
+parser.add_argument('--unmerge_cells', dest='unmerge_cells',default=False,
+                    help="Auto figure out and splitting tables")
 args = parser.parse_args()
 
 
@@ -82,14 +81,18 @@ def clean_2dlist(l_2d, ugly_chars=["  "]):
                 item=item.replace(ugly_char, "")
             output[i_row].append(item)
     # if the item in the ignore list, ignore them
-    #if args.ignore_keywords:
-    #    for i_row, row in enumerate(l_2d):
-    #        for i_item, item in enumerate(row):
-    #            if item==
 
+    if args.ignore_keywords:
 
+        precleaned_output=output
+        for i_row, row in enumerate(precleaned_output):
+            for i_item, item in enumerate(row):
 
-
+                for keyword in remove_items:
+                    print("item: ", item)
+                    print("keyword: ", keyword)
+                    if item==keyword:
+                        output[i_row][i_item]=''
     return output
 
 def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_contain):
