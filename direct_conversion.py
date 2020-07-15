@@ -124,6 +124,7 @@ def further_format(l_2d):
     #--- Using column list from config.py
     #--- If special keyword in first digits, collect second row digits into first row
     l_2d_output=l_2d
+    print("l_2d: ", l_2d)
 
     for i_row, row in enumerate(l_2d):
         #for i_item, item in enumerate(row):
@@ -136,33 +137,83 @@ def further_format(l_2d):
                 # -- if there are any characters at all in the row
                 contains_alpha=any([ char.isalpha() for char in row[1] ])
                 for i_index, char in enumerate(row[1]):
+                    print("char: ", char)
                     if row[1][i_index].isdigit() or row[1][i_index]==".":
                         append_string=append_string+row[1][i_index]
-                        print(append_string)
+                        print("append_string:", append_string)
                     else:
                         break
             except:
                 pass
-        if not append_string=="" and not contains_alpha:
+        if not append_string=="":# and not contains_alpha:
             l_2d_output[i_row][0]=l_2d_output[i_row][0]+" "+append_string
+            if (l_2d_output[i_row][1]==append_string):
+                l_2d_output[i_row].pop(1)
+            else:
+                l_2d_output[i_row][1]=l_2d_output[i_row][1]=l_2d_output[i_row][1][len(append_string):]
+    print("l_2d_output1 : ", l_2d_output)
 
     #--- If alphabets in the first column following numbers and ., move them
     #--- to the beginning of the second column
-    #l_2d=l_2d_output
-    #for i_row, row in enumerate(l_2d):
-    #    there_is_numbers=False
-    #    string_appended=""
-    #    try:
-    #        for i_index, char in enumerate(row[1]):
-    #            if char.isdigit():
-    #                there_is_number=True:
-    #            if there_is_number and char.is_alpha()
+    l_2d=l_2d_output
+    for i_row, row in enumerate(l_2d):
+
+        there_is_numbers=False
+        number=""
+        string_appended=""
+        #print("row: ", row)
+        #print("row[0]", row[0])
+        char_starts=False
+        for i_index, char in enumerate(row[0]):
+            #print("char: ", char)
+            if char.isdigit():
+                #print("char is digit: ", char)
+                there_is_numbers=True
+
+            if there_is_numbers and char.isalpha():
+                char_starts=True
+                #print("char is alpha: ", char)
+            if there_is_numbers and char_starts:
+                string_appended=string_appended+char
+            elif there_is_numbers and not char_starts:
+                number=number+char
+
+        print("string appended: ", string_appended)
+        print("number: ", number)
+
+        if not string_appended=="":
+            l_2d_output[i_row][0]=number
+            if len(l_2d_output[i_row])==1:
+                l_2d_output[i_row].append(string_appended)
+            else:
+                l_2d_output[i_row][1]=string_appended+l_2d_output[i_row][1]
+
+    #---If the row only have 1 item, and the item mainly consist on characters, move it 1 row in
+    print("l_2d_output2 ",l_2d_output)
+
+
+    l_2d=l_2d_output
+
+    for i_row, row in enumerate(l_2d):
+        print("row:", row)
+
+        if len(row)==1:
+
+            there_is_alpha=any([char.isalpha for char in row[0]])
+            if there_is_alpha:
+                l_2d_output[i_row].append(l_2d_output[i_row][0])
+                l_2d_output[i_row][0]=""
+
+    # --- If the column 1 does not contain numbers, move it to column 2, if column 2 does not contain characters, move it to column 1, move everything else up 1
 
 
 
 
 
-    print(l_2d_output)
+
+
+
+    print("l_2d_output3 ",l_2d_output)
     return l_2d_output
 
 
