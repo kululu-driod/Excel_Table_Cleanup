@@ -14,11 +14,12 @@ from config import *
 parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
 parser.add_argument('input_file', nargs='?',
                     help='input csv file, follows right after program name, default to test.csv if not specfied', default="test.csv")
-parser.add_argument('--keep_header', dest='keep_header',default=False, action="store_true",
-                    help='Remove lines containing headers/footers as is specified in the script')
+parser.add_argument('--keep_header', dest='keep_header',default=False, action="store_true",help='Remove lines containing headers/footers as is specified in the script')
+parser.add_argument('--caps_newline', dest='caps_is_newline',default=False, action="store_true",help='Split line in cells by capitalization')
 parser.add_argument('--ignore_keywords', dest='ignore_keywords',default=False,
 action="store_true", help="ignore and drop certain keywords as is specified in the script")
 parser.add_argument('--remove_table_head', dest='remove_table_head',default=False,action="store_true", help="Remove recurring table head as is specified in the script")
+parser.add_argument('--extra_format', dest='extra_format',default=False,action="store_true", help="Extra Formatting to put numbers in one row and words in another")
 #parser.add_argument('--table_split', dest='table_split',default=False,
 #                    help="Auto figure out and splitting tables")
 parser.add_argument('--unmerge_cells', dest='unmerge_cells',default=False,
@@ -118,21 +119,66 @@ def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_con
         #print("output", output)
     return output
 
+def further_format(l_2d):
+
+    #--- Using column list from config.py
+    #--- If special keyword in first digits, collect second row digits into first row
+    l_2d_output=l_2d
+
+    for i_row, row in enumerate(l_2d):
+        #for i_item, item in enumerate(row):
+        append_string=""
+        #--- Appended string
+        contains_alpha=False
+
+        if any(keyword in row[0] for keyword in column_list):
+            try:
+                # -- if there are any characters at all in the row
+                contains_alpha=any([ char.isalpha() for char in row[1] ])
+                for i_index, char in enumerate(row[1]):
+                    if row[1][i_index].isdigit() or row[1][i_index]==".":
+                        append_string=append_string+row[1][i_index]
+                        print(append_string)
+                    else:
+                        break
+            except:
+                pass
+        if not append_string=="" and not contains_alpha:
+            l_2d_output[i_row][0]=l_2d_output[i_row][0]+" "+append_string
+
+    #--- If alphabets in the first column following numbers and ., move them
+    #--- to the beginning of the second column
+    #l_2d=l_2d_output
+    #for i_row, row in enumerate(l_2d):
+    #    there_is_numbers=False
+    #    string_appended=""
+    #    try:
+    #        for i_index, char in enumerate(row[1]):
+    #            if char.isdigit():
+    #                there_is_number=True:
+    #            if there_is_number and char.is_alpha()
+
+
+
+
+
+    print(l_2d_output)
+    return l_2d_output
+
+
+
 
 print("input_file:", args.input_file)
+
 with open(args.input_file, newline='') as csvfile:
     # ---Reading the csv
     spamreader = csv.reader(csvfile)
-
     # ---Reading the rows
-
     output_csv=open('output.csv', 'w', newline='')
-
 
     spamwriter = csv.writer(output_csv,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-
-    #TODO call the following smart split line
+    #--- smart split line
     for i_row, row in enumerate(spamreader):
         # ---Getting the items in the rows
 
@@ -141,7 +187,7 @@ with open(args.input_file, newline='') as csvfile:
         for i_item, item in enumerate(row):
             list_item=item.split("\n")
             # if it's not column 1
-            if not i_item==0 and cap_is_newline:
+            if not i_item==0 and args.caps_is_newline:
                 list_item=further_split_at_cap(list_item)
 
             # If line contain header keyword, remove it
@@ -166,6 +212,9 @@ with open(args.input_file, newline='') as csvfile:
         if not args.keep_header:
             l_2d_trans=remove_header(l_2d_trans)
 
-        for output_row in l_2d_trans:
+        #---Futher formatting (keeps number in one column and alphabets in another)
+        if args.extra_format:
+            l_2d_trans=further_format(l_2d_trans)
 
+        for output_row in l_2d_trans:
             spamwriter.writerow(output_row)
