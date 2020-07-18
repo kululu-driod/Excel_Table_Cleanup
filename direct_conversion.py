@@ -43,22 +43,6 @@ def transpose_2d_list_string(l_2d):
 
     return l_2d_T
 
-#def merge_cells(l_2d):
-#    # If there is nothing else in the first transposed column, merge the cells in same row the following columns
-#    output_l_2d=l_2d
-#    line_merged=1
-#    for i_row, row in enumerate(l_2d):
-#        # if first item ==""
-#        if row[0] == "" and (not i_row ==0):
-#            for i_item, item in enumerate(l_2d[i_row-1][1:]):
-#                # if
-#                if not item=="":
-#                    output_l_2d[i_row-line_merged][i_item]=item+"\n"+l_2d[i_row][i_item]
-#
-#                print("row:")
-#                print(output_l_2d[i_row-line_merged][i_item])
-#                output_l_2d[i_row][i_item]=""
-#    return output_l_2d
 
 
 def further_split_at_cap(input_list, cap=True):
@@ -91,8 +75,6 @@ def clean_2dlist(l_2d, ugly_chars=["  "]):
             for i_item, item in enumerate(row):
 
                 for keyword in remove_items:
-                    print("item: ", item)
-                    print("keyword: ", keyword)
                     if item==keyword:
                         output[i_row][i_item]=''
     return output
@@ -103,21 +85,14 @@ def remove_header(l_2d, header_keyword=header_keyword, header_contain=header_con
         skip_row=False
         for item in row:
 
-            #print("item: ", item)
             for keyword in header_keyword:
-                #print("keyword", keyword)
                 if keyword==item:
-                    #print("keyword matched: ", keyword)
                     skip_row=True
             for contain_keyword in header_contain:
-                #print(contain_keyword)
                 if contain_keyword in item:
-                    #print("keyword contained: ", contain_keyword)
                     skip_row=True
         if skip_row==False:
-            #print("row appending :", row)
             output.append(row)
-        #print("output", output)
     return output
 
 def further_format(l_2d):
@@ -125,7 +100,6 @@ def further_format(l_2d):
     #--- Using column list from config.py
     #--- If special keyword in first digits, collect second row digits into first row
     l_2d_output=l_2d
-    print("l_2d: ", l_2d)
 
     for i_row, row in enumerate(l_2d):
         #for i_item, item in enumerate(row):
@@ -138,10 +112,8 @@ def further_format(l_2d):
                 # -- if there are any characters at all in the row
                 contains_alpha=any([ char.isalpha() for char in row[1] ])
                 for i_index, char in enumerate(row[1]):
-                    print("char: ", char)
                     if (row[1][i_index].isdigit() or row[1][i_index]==".") and not "mm" in row[1]:
                         append_string=append_string+row[1][i_index]
-                        print("append_string:", append_string)
                     else:
                         break
             except:
@@ -152,7 +124,6 @@ def further_format(l_2d):
                 l_2d_output[i_row].pop(1)
             else:
                 l_2d_output[i_row][1]=l_2d_output[i_row][1]=l_2d_output[i_row][1][len(append_string):]
-    print("l_2d_output1 : ", l_2d_output)
 
     #--- If alphabets in the first column following numbers and ., move them
     #--- to the beginning of the second column
@@ -162,25 +133,18 @@ def further_format(l_2d):
         there_is_numbers=False
         number=""
         string_appended=""
-        #print("row: ", row)
-        #print("row[0]", row[0])
         char_starts=False
         for i_index, char in enumerate(row[0]):
-            #print("char: ", char)
             if char.isdigit():
-                #print("char is digit: ", char)
                 there_is_numbers=True
 
             if there_is_numbers and char.isalpha():
                 char_starts=True
-                #print("char is alpha: ", char)
             if there_is_numbers and char_starts:
                 string_appended=string_appended+char
             elif there_is_numbers and not char_starts:
                 number=number+char
 
-        print("string appended: ", string_appended)
-        print("number: ", number)
 
         if not string_appended=="":
             l_2d_output[i_row][0]=number
@@ -189,15 +153,11 @@ def further_format(l_2d):
             else:
                 l_2d_output[i_row][1]=string_appended+l_2d_output[i_row][1]
 
-    print("l_2d_output3 ",l_2d_output)
-    #---If the row only have 1 item, and the item mainly consist on characters, move it 1 row in
-    #print("l_2d_output2 ",l_2d_output)
 
 
     l_2d=l_2d_output
 
     for i_row, row in enumerate(l_2d):
-        #print("row:", row)
 
         if len(row)==1:
 
@@ -208,7 +168,6 @@ def further_format(l_2d):
 
     # --- If the column 1 does not contain numbers, move it to column 2, if column 2 does not contain characters, move it to column 1, move everything else up 1
 
-    print("l_2d_output4 ",l_2d_output)
 
     l_2d=l_2d_output
     for i_row, row in enumerate(l_2d):
@@ -241,19 +200,6 @@ def further_format(l_2d):
                 l_2d_output[i_row].append(l_2d[i_row][0])
                 l_2d_output[i_row][0]=""
 
-
-        #if not any([char.isalpha() for char in row[1]]):
-        #    #if len(row)==1:
-        #    #    l_2d_output[i_row].append(row[0])
-        #    #    l_2d_output[i_row][0]=""
-        #    #else:
-        #    l_2d_output[i_row][1]=l_2d[i_row][0]
-
-
-
-
-
-    print("l_2d_output4 ",l_2d_output)
     return l_2d_output
 
 
