@@ -10,6 +10,7 @@ from config import *
 # TODO table head rip
 # TODO splitting table
 # TODO if something is in column 1, and they are all just alphabets of more than 3 words, move them up 1 row to the last non-empty cell
+#TODO remove cells that contains nothing but special characters
 
 parser = argparse.ArgumentParser(description='Auto clean up OCR output csv file for tendering uses')
 parser.add_argument('input_file', nargs='?',
@@ -138,7 +139,7 @@ def further_format(l_2d):
                 contains_alpha=any([ char.isalpha() for char in row[1] ])
                 for i_index, char in enumerate(row[1]):
                     print("char: ", char)
-                    if row[1][i_index].isdigit() or row[1][i_index]==".":
+                    if (row[1][i_index].isdigit() or row[1][i_index]==".") and not "mm" in row[1]:
                         append_string=append_string+row[1][i_index]
                         print("append_string:", append_string)
                     else:
@@ -188,14 +189,15 @@ def further_format(l_2d):
             else:
                 l_2d_output[i_row][1]=string_appended+l_2d_output[i_row][1]
 
+    print("l_2d_output3 ",l_2d_output)
     #---If the row only have 1 item, and the item mainly consist on characters, move it 1 row in
-    print("l_2d_output2 ",l_2d_output)
+    #print("l_2d_output2 ",l_2d_output)
 
 
     l_2d=l_2d_output
 
     for i_row, row in enumerate(l_2d):
-        print("row:", row)
+        #print("row:", row)
 
         if len(row)==1:
 
@@ -206,14 +208,52 @@ def further_format(l_2d):
 
     # --- If the column 1 does not contain numbers, move it to column 2, if column 2 does not contain characters, move it to column 1, move everything else up 1
 
+    print("l_2d_output4 ",l_2d_output)
+
+    l_2d=l_2d_output
+    for i_row, row in enumerate(l_2d):
+        # if column 1 does not contain numbers
+        if not any([char.isdigit() for char in row[0]]):
+            if len(row)==1:
+                l_2d_output[i_row].append(row[0])
+                l_2d_output[i_row][0]=""
+            else:
+                l_2d_output[i_row][1]=l_2d[i_row][0]+" "+l_2d[i_row][1]
+                l_2d_output[i_row][0]=""
+
+
+    # popping all the first cells if they are empty
+    l_2d=l_2d_output
+    for i_row, row in enumerate(l_2d):
+        for i_item, item in enumerate(row):
+            if item=="":
+                l_2d_output[i_row].pop(i_item)
+
+    # if there are more than 3 characters in the first row, move them right
+    l_2d=l_2d_output
+    for i_row, row in enumerate(l_2d):
+        l_char=[char for char in row[0] if char.isalpha()]
+        if len(l_char)>=3:
+            if len(row)>1:
+                l_2d_output[i_row][1]=l_2d[i_row][0]+l_2d[i_row][1]
+                l_2d_output[i_row][0]=""
+            else:
+                l_2d_output[i_row].append(l_2d[i_row][0])
+                l_2d_output[i_row][0]=""
+
+
+        #if not any([char.isalpha() for char in row[1]]):
+        #    #if len(row)==1:
+        #    #    l_2d_output[i_row].append(row[0])
+        #    #    l_2d_output[i_row][0]=""
+        #    #else:
+        #    l_2d_output[i_row][1]=l_2d[i_row][0]
 
 
 
 
 
-
-
-    print("l_2d_output3 ",l_2d_output)
+    print("l_2d_output4 ",l_2d_output)
     return l_2d_output
 
 
