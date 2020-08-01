@@ -1,5 +1,6 @@
 
 # ---Specify here header/footer keyword to be removed, using the  --keep_header flag removes the effect
+
 header_keyword=["K C Tang Consultants Ltd.", "OFFICE RENOVATION FOR HKSAPID AT", "OFFICE RENOVATION FOR HKSAPID AT", "SCHEDULE OF WORKS", "SCHEDULE NO. 1 - PRELIMINARIES", "LEK YUEN COMMUNITY HALL, SHATIN, NT", "UNIT NO. 2+7, G/F", "SCHEDULE NO.", "LEK YUEN COMMUNITY HALL,SHAUN, NT", "KTang Consultants Ltd", "UNIT NO. +7, G/F", "LEK WEN COMMUNITY HALL, SHATIR NT", "Summary of Tender", "LEK YUEN COMMUNITY HALL, SHATIN, NT.", "OFFICE RENOVATION OF HKSAPJD AT", "E&M installation","Summary","785HKSAPID SOW", "LEK YUEN COMMUNITY HALL, SHAT N, NT","g/ro.ttci £LYJ", "LEK YUEN COMMUNITY HALL, SHATiN, NT", "KTang Consultants Ltd.", "KC Tang Consultants Ltd.","LEK YUEN COMMUNITY HALL, SHATINNT", "785SOW", "KC Tang Consultants Ltd", "LEK YUEN COMMUNITY HALLSHATIN, NT", "785HKSAPID SOW", "i", "/", ". V", "YUEN", "OF WORKS WORKS", "SCHEDULE", "HKSAPID AT", "+7, G/F", "OFFICE", "LEK YUEN COMMUNITY HALL,SHAUN, NT.", "B. MVAC INSTALLATION (CONT'D)", "LEK YUEN COMMUNITY HALL, SHATIR NT. "]
 
 

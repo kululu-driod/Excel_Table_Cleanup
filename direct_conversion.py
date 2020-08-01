@@ -20,7 +20,7 @@ parser.add_argument('--caps_newline', dest='caps_is_newline',default=False, acti
 parser.add_argument('--ignore_keywords', dest='ignore_keywords',default=False,
 action="store_true", help="ignore and drop certain keywords as is specified in the script")
 parser.add_argument('--remove_table_head', dest='remove_table_head',default=False,action="store_true", help="Remove recurring table head as is specified in the script")
-parser.add_argument('--extra_format', dest='extra_format',default=False,action="store_true", help="Extra Formatting to put numbers in one row and words in another")
+parser.add_argument('--no_extra_format', dest='no_extra_format',default=False,action="store_true", help="Removing extra Formatting to put numbers in one row and words in another")
 #parser.add_argument('--table_split', dest='table_split',default=False,
 #                    help="Auto figure out and splitting tables")
 parser.add_argument('--unmerge_cells', dest='unmerge_cells',default=False,
@@ -250,7 +250,7 @@ with open(args.input_file, newline='') as csvfile:
             l_2d_trans=remove_header(l_2d_trans)
 
         #---Futher formatting (keeps number in one column and alphabets in another)
-        if args.extra_format:
+        if not args.no_extra_format:
             l_2d_trans=further_format(l_2d_trans)
 
         for output_row in l_2d_trans:
