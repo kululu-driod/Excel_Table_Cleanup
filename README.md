@@ -11,7 +11,7 @@ You should end up with a file with the name of _tendering_file.csv_
 ## Doing the cleaning 
 
 ```
-python direct_conversion.py --extra_format tendering_file.csv
+python direct_conversion.py tendering_file.csv
 ```
 
 It should result in an output.csv file reformatted
